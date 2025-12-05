@@ -29,7 +29,16 @@ class BaseDAO(ABC, Generic[T]):
     pass
 
   ### Create
-  # response = self._client.table(self._table_name).insert( ??? ).execute()
+  def create(self, model: T) -> Optional[T]:
+    try:
+      data = self.to_dict(model)
+      response = self._client.table(self._table_name).insert(data).execute()
+      if response.data and len(response.data) > 0:
+        return self.to_model(response.data[0])
+      return None
+    except Exception as e:
+      print(f'Erro ao criar registro: {e}')
+      return None
 
   ### Read
   def read(self, pk: str, value: T) -> Optional[T]:
@@ -54,7 +63,24 @@ class BaseDAO(ABC, Generic[T]):
       return []
 
   ### Update
-  # response = self._client.table(self._table_name).update( ??? ).eq(pk, value).execute()
+  def update(self, pk: str, value: T, model: T) -> bool:
+    try:
+      data = self.to_dict(model)
+      response = self._client.table(self._table_name).update(data).eq(pk, value).execute()
+      if response.data:
+        return True
+      return False
+    except Exception as e:
+      print(f'Erro ao atualizar registro: {e}')
+      return False
 
   ### Delete
-  # response = self._client.table(self._table_name).delete().eq(pk, value).execute()
+  def delete(self, pk: str, value: T) -> bool:
+    try:
+      response = self._client.table(self._table_name).delete().eq(pk, value).execute()
+      if response.data:
+        return True 
+      return False
+    except Exception as e:
+      print(f'Erro ao deletar registro: {e}')
+      return False
