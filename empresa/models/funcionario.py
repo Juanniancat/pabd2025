@@ -19,7 +19,19 @@ class Funcionario:
 
     # Funcionario -> JSON (dict)
     def to_dict(self) -> dict:
-        return asdict(self)
+        return {
+            'cpf': self._cpf,
+            'pnome': self._pnome,
+            'unome': self._unome,
+            'data_nasc': str(self._data_nasc),
+            'endereco': self._endereco,
+            'salario': self._salario,
+            'sexo': self._sexo,
+            'cpf_supervisor': self._cpf_supervisor,
+            'numero_departamento': self._numero_departamento,
+            'created_at': self._created_at,
+            'updated_at': self._updated_at
+        }
 
     # JSON (dict) -> Funcionario
     @classmethod

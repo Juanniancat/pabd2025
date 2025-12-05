@@ -4,19 +4,110 @@
 
 from empresa.config.database import SupabaseConnection
 from empresa.dao.funcionario_dao import FuncionarioDAO
+from empresa.dao.departamento_dao import DepartamentoDAO
+from empresa.models.funcionario import Funcionario
+from empresa.models.departamento import Departamento
+from datetime import date
 
 client = SupabaseConnection().client
 
-# Criando DAO para acessar a tabela funcionario
+# Criando DAOs para acessar as tabelas
 funcionario_dao = FuncionarioDAO(client)
+departamento_dao = DepartamentoDAO(client)
 
-# Read All
+print("=" * 80)
+print("CRUD - FUNCIONÁRIO")
+print("=" * 80)
+
+# ===== READ ALL - FUNCIONÁRIO =====
+print("\n--- READ ALL (Funcionários) ---")
 for funcionario in funcionario_dao.read_all():
-  print(funcionario)
+    print(funcionario)
 
-# Read
+# ===== READ - FUNCIONÁRIO =====
+print("\n--- READ (Funcionário específico) ---")
 f = funcionario_dao.read('cpf', '11122233344')
 print(f)
+
+# ===== CREATE - FUNCIONÁRIO =====
+print("\n--- CREATE (Novo Funcionário) ---")
+novo_funcionario = Funcionario(
+    _cpf='99988877766',
+    _pnome='João',
+    _unome='Silva',
+    _data_nasc=date(1995, 8, 15),
+    _endereco='Natal-RN',
+    _salario=5500.00,
+    _sexo='m',
+    _cpf_supervisor='55566677788',
+    _numero_departamento=101
+)
+funcionario_criado = funcionario_dao.create(novo_funcionario)
+print(f"Funcionário criado: {funcionario_criado}")
+
+# ===== UPDATE - FUNCIONÁRIO =====
+print("\n--- UPDATE (Atualizar Funcionário) ---")
+funcionario_atualizado = Funcionario(
+    _cpf='99988877766',
+    _pnome='João',
+    _unome='Santos',
+    _data_nasc=date(1995, 8, 15),
+    _endereco='Parnamirim-RN',
+    _salario=6000.00,
+    _sexo='m',
+    _cpf_supervisor='55566677788',
+    _numero_departamento=102
+)
+sucesso = funcionario_dao.update('cpf', '99988877766', funcionario_atualizado)
+print(f"Atualização bem-sucedida: {sucesso}")
+
+# ===== DELETE - FUNCIONÁRIO =====
+print("\n--- DELETE (Deletar Funcionário) ---")
+sucesso = funcionario_dao.delete('cpf', '99988877766')
+print(f"Deleção bem-sucedida: {sucesso}")
+
+print("\n" + "=" * 80)
+print("CRUD - DEPARTAMENTO")
+print("=" * 80)
+
+# ===== READ ALL - DEPARTAMENTO =====
+print("\n--- READ ALL (Departamentos) ---")
+for departamento in departamento_dao.read_all():
+    print(departamento)
+
+# ===== READ - DEPARTAMENTO =====
+print("\n--- READ (Departamento específico) ---")
+d = departamento_dao.read('numero', 101)
+print(d)
+
+# ===== CREATE - DEPARTAMENTO =====
+print("\n--- CREATE (Novo Departamento) ---")
+novo_departamento = Departamento(
+    _numero=999,
+    _nome='Desenvolvimento',
+    _cpf_gerente='55566677788'
+)
+departamento_criado = departamento_dao.create(novo_departamento)
+print(f"Departamento criado: {departamento_criado}")
+
+# ===== UPDATE - DEPARTAMENTO =====
+print("\n--- UPDATE (Atualizar Departamento) ---")
+departamento_atualizado = Departamento(
+    _numero=999,
+    _nome='Desenvolvimento e Inovação',
+    _cpf_gerente='55566677788'
+)
+sucesso = departamento_dao.update('numero', 999, departamento_atualizado)
+print(f"Atualização bem-sucedida: {sucesso}")
+
+# ===== DELETE - DEPARTAMENTO =====
+print("\n--- DELETE (Deletar Departamento) ---")
+sucesso = departamento_dao.delete('numero', 999)
+print(f"Deleção bem-sucedida: {sucesso}")
+
+print("\n" + "=" * 80)
+print("FIM DA DEMONSTRAÇÃO CRUD")
+print("=" * 80)
 
 """
 from conta import Conta
