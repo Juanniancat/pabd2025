@@ -29,8 +29,18 @@ class BaseDAO(ABC, Generic[T]):
     pass
 
   ### Create
-  
+  # response = self._client.table(self._table_name).insert( ??? ).execute()
+
   ### Read
+  def read(self, pk: str, value: T) -> Optional[T]:
+    try:
+      response = self._client.table(self._table_name).select('*').eq(pk, value).execute()
+      if response.data and len(response.data) > 0:
+        return self.to_model(response.data[0])
+      return None
+    except Exception as e:
+      print(f'Erro ao buscar registro: {e}')
+      return None
 
   # Retorna todos os valores de uma tabela
   def read_all(self) -> List[T]:
@@ -42,7 +52,9 @@ class BaseDAO(ABC, Generic[T]):
     except Exception as e:
       print(f'Erro ao buscar todos os registros: {e}')
       return []
-    
+
   ### Update
-  
+  # response = self._client.table(self._table_name).update( ??? ).eq(pk, value).execute()
+
   ### Delete
+  # response = self._client.table(self._table_name).delete().eq(pk, value).execute()
